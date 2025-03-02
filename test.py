@@ -1,6 +1,6 @@
-from LAgent.core.llm import ChatOpenAI
-from LAgent.core.agent import Agent
-from LAgent.core.tool import tool
+from MiniAgent.core.llm import ChatOpenAI
+from MiniAgent.core.agent import Agent
+from MiniAgent.core.tool import tool
 
 import os
 import time
@@ -39,15 +39,15 @@ def calculate(expression: str):
 
 
 # 创建LLM实例
-llm = ChatOpenAI(
-    model_name="hunyuan-turbos-20250226",
-    api_key="sk-weyVGyaRPkWjxgROsg27xzFLNIVScfXfNUs9nb3FKcvMxZLz",
-    base_url="https://api.hunyuan.cloud.tencent.com/v1")
+# llm = ChatOpenAI(
+#     model_name="hunyuan-turbos-20250226",
+#     api_key="sk-weyVGyaRPkWjxgROsg27xzFLNIVScfXfNUs9nb3FKcvMxZLz",
+#     base_url="https://api.hunyuan.cloud.tencent.com/v1")
 
-# llm = LLM(
-#     model_name="glm-4-air-0111",
-#     api_key="1f4fff3f274d4f8990754cd1ee66e001.Eud0KAAYoLLrLE0h",
-#     base_url="https://open.bigmodel.cn/api/paas/v4/")
+llm = ChatOpenAI(
+    model_name="glm-4-air-0111",
+    api_key="1f4fff3f274d4f8990754cd1ee66e001.Eud0KAAYoLLrLE0h",
+    base_url="https://open.bigmodel.cn/api/paas/v4/")
 
 # 创建Agent并添加工具
 agent = Agent(llm=llm, tools=[get_weather])
@@ -65,4 +65,5 @@ agent.set_tools([calculate])  # 切换到计算工具
 start_time = time.time()
 response = agent.run("计算一下18/3*4-2")
 end_time = time.time()
+print(response)
 print(f"执行时间: {end_time - start_time:.2f}秒")
