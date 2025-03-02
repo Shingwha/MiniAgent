@@ -26,6 +26,9 @@ class Agent:
     def set_tools(self, tools: list):
         self.tools = tools
 
+    def set_system_prompt(self, system_prompt: str):
+        self.system_prompt = system_prompt
+
     def add_tool(self, tool: Union[Tool, Callable]) -> Optional[str]:
         self.tools.append(tool)
 
@@ -49,7 +52,7 @@ class Agent:
         self.conversation.add_user_message(query)
         while True:
             response = self.llm.generate(messages=self.conversation.get_messages(),
-                                        tools=[self.get_tool_instance(tool).to_dict() for tool in self.tools] if self.tools else None )
+                                        tools=[tool.to_dict() for tool in self.tools] if self.tools else None )
             content = response.content
             tool_calls = response.tool_calls
             if tool_calls:
@@ -70,20 +73,10 @@ class Agent:
             
             # 查找匹配工具
             for tool in self.tools:
-                tool_instance = self.get_tool_instance(tool)
-                if tool_instance.name == tool_name:
-                    result = tool_instance.execute(**arguments)
+                if tool.name == tool_name:
+                    result = tool.execute(**arguments)
                     print(f"\nExecuting tool <{tool_name}> with arguments {arguments} -> Result: {result}")
                     return str(result)
             return f"Tool <{tool_name}> not found"
         except Exception as e:
             return f"Tool error: {str(e)}"
-
-    @staticmethod
-    def get_tool_instance(tool_or_func):
-        if isinstance(tool_or_func, Tool):
-            return tool_or_func
-        elif hasattr(tool_or_func, '_tool'):
-            return tool_or_func._tool
-        else:
-            raise TypeError(f"无法从类型 {type(tool_or_func)} 获取Tool实例")

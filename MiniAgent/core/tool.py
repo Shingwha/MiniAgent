@@ -42,6 +42,7 @@ class Tool:
 def tool(func=None, *, name=None, description=None):
     def decorator(func):
         tool_instance = Tool(name or func.__name__, description or func.__doc__, func)
+        return tool_instance
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
             return tool_instance.execute(*args, **kwargs)

@@ -5,11 +5,8 @@ import time
 
 
 # 使用装饰器定义工具
-@tool
+@tool(description="获取指定城市的天气信息")
 def get_weather(city: str, date: str = "today"):
-    """
-    获取指定城市的天气信息
-    """
     # 这里应该是实际的天气API调用
     if city == "北京":
         return f"{city}在{date}的天气晴朗，温度25°C"
@@ -48,6 +45,7 @@ llm.load_config("glm.json")
 
 
 agent = Agent(llm=llm, tools=[get_weather, get_time])
+
 response = agent.run("今天几号了？现在几点钟了")
 print(f"\n最终回答 -> {response[-1]['content']}")
 
