@@ -36,15 +36,15 @@ class Agent:
         if tool in self.tools:
             self.tools.remove(tool)
 
-    def reset_conversation(self):
-        self.conversation = Conversation()
+    def clear_conversation(self):
+        self.conversation.clear()
 
-    def reset_tools(self):
+    def clear_tools(self):
         self.tools = []
 
     def reset(self):
-        self.reset_conversation()
-        self.reset_tools()
+        self.clear_conversation()
+        self.clear_tools()
 
     def run(self,query: str = None):
         if self.conversation.messages == []:
