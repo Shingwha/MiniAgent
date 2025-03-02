@@ -1,21 +1,17 @@
 from typing import Dict, List, Any, Optional, Union, Callable
 import json
+from dataclasses import dataclass, field
 from .tool import Tool
 from .message import Conversation
 
+
+@dataclass
 class Agent:
-    def __init__(
-            self,
-            name: str = None,
-            llm: object = None,
-            tools: Optional[List[Union[Tool, Callable]]] = None,
-            ):
-        
-        self.name = name
-        self.llm = llm
-        self.tools = tools
-        self.system_prompt = "你是一个智能代理，协调LLM和工具使用"
-        self.conversation = Conversation()
+    name: Optional[str] = None
+    llm: Optional[object] = None
+    tools: List[Union[Tool, Callable]] = field(default_factory=list)
+    system_prompt: str = "你是一个智能代理，协调LLM和工具使用"
+    conversation: Conversation = field(default_factory=Conversation)
 
     def set_name(self, name: str):
         self.name = name
@@ -46,28 +42,29 @@ class Agent:
         self.clear_conversation()
         self.clear_tools()
 
-    def run(self,query: str = None):
-        if self.conversation.messages == []:
+    def run(self, query: str = None):
+        if not self.conversation.messages:
             self.conversation.add_system_message(self.system_prompt)
         self.conversation.add_user_message(query)
         while True:
-            response = self.llm.generate(messages=self.conversation.get_messages(),
-                                        tools=[tool.to_dict() for tool in self.tools] if self.tools else None )
+            response = self.llm.generate(
+                messages=self.conversation.get_messages(),
+                tools=[tool.to_dict() for tool in self.tools] if self.tools else None
+            )
             content = response.content
             tool_calls = response.tool_calls
             if tool_calls:
                 self.conversation.add_tool_message(content=content, tool_calls=tool_calls)
                 tool_results = self._execute_tool_calls(tool_calls)
                 for tool_call_id, tool_result in tool_results.items():
-                    self.conversation.add_tool_result(content=tool_result,tool_call_id=tool_call_id)
+                    self.conversation.add_tool_result(content=tool_result, tool_call_id=tool_call_id)
             else:
                 self.conversation.add_assistant_message(content)
                 break
         return self.conversation.get_messages()
 
-
     def _execute_tool_calls(self, tool_calls: List[dict]):
-        tool_dict = {tool.name: tool for tool in self.tools}
+        tool_dict = {tool.name: tool for tool in self.tools} if self.tools else {}
         results = {}
         for tool_call in tool_calls:
             try:

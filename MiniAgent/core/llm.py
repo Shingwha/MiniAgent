@@ -1,35 +1,21 @@
 from openai import OpenAI
 from typing import Union, List, Dict, Any, Optional
-from .message import Message,Conversation
+from dataclasses import dataclass
 import json
+from .message import Message, Conversation
 
+@dataclass
 class ChatOpenAI:
-    def __init__(
-            self,
-            api_key: str = None,
-            base_url: str = None,
-            model_name: str = None,
-            stream: bool = False,
-            temperature: float = 0.7,
-            max_tokens: int  = 1024,
-            top_p: float = None,
-            frequency_penalty: float = None,
-        ):
-
-        self.api_key: str = api_key
-        self.base_url: str = base_url
-        self.model_name: str = model_name
-
-        self.temperature: float = temperature
-        self.max_tokens: int  = max_tokens
-        self.top_p: float = top_p
-        self.frequency_penalty: float = frequency_penalty
-        
-        self.stream: bool = stream
-
-        self.client = None
-
-
+    api_key: Optional[str] = None
+    base_url: Optional[str] = None
+    model_name: Optional[str] = None
+    stream: bool = False
+    temperature: float = 0.7
+    max_tokens: int = 1024
+    top_p: Optional[float] = None
+    frequency_penalty: Optional[float] = None
+    tool_choices: Optional[list] = None
+    client: Optional[OpenAI] = None
 
     def set_api_key(self, api_key: str):
         self.api_key = api_key
@@ -80,11 +66,11 @@ class ChatOpenAI:
         except Exception as e:
             print(f"Error saving config to {file_path}: {e}")
 
-
     def generate(
-                self, 
-                messages: Union[List[Dict[str,Any]], Conversation],
-                tools: Optional[list[Dict]] = None) -> Dict[str, Any]:
+            self,
+            messages: Union[List[Dict[str, Any]], Conversation],
+            tools: Optional[list[Dict]] = None
+    ) -> Dict[str, Any]:
         kwargs = {
             "model": self.model_name,
             "messages": messages,
@@ -93,7 +79,7 @@ class ChatOpenAI:
         }
         if tools:
             kwargs["tools"] = tools
-        
+
         self.client = OpenAI(api_key=self.api_key, base_url=self.base_url)
         response = self.client.chat.completions.create(**kwargs)
         return response.choices[0].message  # 直接返回Message对象
