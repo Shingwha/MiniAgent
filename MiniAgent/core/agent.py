@@ -57,26 +57,29 @@ class Agent:
             tool_calls = response.tool_calls
             if tool_calls:
                 self.conversation.add_tool_message(content=content, tool_calls=tool_calls)
-                for tool_call in tool_calls:
-                    tool_result = self._execute_tool_call(tool_call)
-                    self.conversation.add_tool_result(content=tool_result,tool_call_id=tool_call.id)
+                tool_results = self._execute_tool_calls(tool_calls)
+                for tool_call_id, tool_result in tool_results.items():
+                    self.conversation.add_tool_result(content=tool_result,tool_call_id=tool_call_id)
             else:
                 self.conversation.add_assistant_message(content)
                 break
         return self.conversation.get_messages()
 
 
-    def _execute_tool_call(self, tool_call: dict):
-        try:
-            tool_name = tool_call.function.name
-            arguments = json.loads(tool_call.function.arguments)
-            
-            # 查找匹配工具
-            for tool in self.tools:
-                if tool.name == tool_name:
+    def _execute_tool_calls(self, tool_calls: List[dict]):
+        tool_dict = {tool.name: tool for tool in self.tools}
+        results = {}
+        for tool_call in tool_calls:
+            try:
+                tool_name = tool_call.function.name
+                arguments = json.loads(tool_call.function.arguments)
+                if tool_name in tool_dict:
+                    tool = tool_dict[tool_name]
                     result = tool.execute(**arguments)
                     print(f"\nExecuting tool <{tool_name}> with arguments {arguments} -> Result: {result}")
-                    return str(result)
-            return f"Tool <{tool_name}> not found"
-        except Exception as e:
-            return f"Tool error: {str(e)}"
+                    results[tool_call.id] = str(result)
+                else:
+                    results[tool_call.id] = f"Tool <{tool_name}> not found: "
+            except Exception as e:
+                results[tool_call.id] = f"Error executing tool <{tool_name}>: {e}"
+        return results
