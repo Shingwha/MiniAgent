@@ -1,4 +1,4 @@
-```markdown
+
 # Agent Framework
 
 一个基于LLM的智能代理框架，支持工具扩展和对话管理，轻松构建AI应用。
@@ -17,19 +17,21 @@ pip install openai  # 基础依赖
 # 将本框架代码放入项目目录即可使用
 ```
 
+
 ## 快速开始
 
 ### 基本使用示例
 ```python
-from agent import Agent
-from llm import ChatOpenAI
-from tool import tool
+from MiniAgent.core import ChatOpenAI, Agent, tool
 
 # 初始化LLM
 llm = ChatOpenAI(api_key="your-api-key", model_name="gpt-3.5-turbo")
 
 # 创建工具
-@tool(description="计算两个数的和")
+@tool()
+"""
+计算两个数的和
+"""
 def add(a: int, b: int):
     return a + b
 
@@ -43,7 +45,7 @@ print(response)
 
 ### 自定义工具示例
 ```python
-@tool(name="天气查询", description="获取指定城市的天气")
+@tool(description="获取指定城市的天气")
 def get_weather(city: str):
     # 这里实现实际的天气API调用
     return f"{city} 晴，25℃"
@@ -94,7 +96,7 @@ llm.set_max_tokens(512)
 ### 自定义系统提示
 ```python
 agent = Agent()
-agent.system_prompt = "你是一个专业数学助手，请逐步解释计算过程"
+agent.set_system_prompt("你是一个智能助手，请根据用户的问题，选择合适的工具来回答用户的问题。")
 ```
 
 ### 查看对话历史
@@ -102,18 +104,6 @@ agent.system_prompt = "你是一个专业数学助手，请逐步解释计算过
 for msg in agent.conversation.messages:
     print(f"[{msg.role}] {msg.content}")
 ```
-
-### 批量添加工具
-```python
-from tools import math_tools, web_tools
-agent.set_tools([*math_tools, *web_tools])
-```
-
-## 贡献指南
-欢迎提交Pull Request，请确保：
-1. 通过所有单元测试
-2. 更新相关文档
-3. 保持API兼容性
 
 ## 许可证
 MIT License
