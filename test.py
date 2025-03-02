@@ -52,18 +52,29 @@ llm = ChatOpenAI(
 # 创建Agent并添加工具
 agent = Agent(llm=llm, tools=[get_weather])
 
-# 运行Agent
-# start_time = time.time()
-# response = agent.run("北京、杭州、上海今天的天气怎么样？")
-# end_time = time.time()
-# print(f"执行时间: {end_time - start_time:.2f}秒")
+start_time = time.time()
+response = agent.run("北京、杭州、上海今天的天气怎么样？")
+end_time = time.time()
+print(response)
+print(f"\n最终回答： {response[-1]['content']}")
+print(f"\n执行时间: {end_time - start_time:.2f}秒")
 
 # 重置对话历史并切换工具
 agent.reset()
 agent.set_tools([calculate])  # 切换到计算工具
 
 start_time = time.time()
-response = agent.run("计算一下18/3*4-2")
+response = agent.run("666*9999-1458020")
 end_time = time.time()
 print(response)
+print(f"\n最终回答： {response[-1]['content']}")
+print(f"\n执行时间: {end_time - start_time:.2f}秒")
+
+# 重置对话历史并切换工具
+agent.reset()
+start_time = time.time()
+response = agent.run("兵马俑在哪里")
+end_time = time.time()
+print(response)
+print(f"\n最终回答： {response[-1]['content']}")
 print(f"执行时间: {end_time - start_time:.2f}秒")

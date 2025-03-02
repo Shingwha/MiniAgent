@@ -64,36 +64,4 @@ class ChatOpenAI:
             # kwargs["tool_choices"] = self.tool_choices
 
         response = self.client.chat.completions.create(**kwargs)
-        print(response.choices[0].message.content)
-        return self._format_response(response)
-
-    def _format_response(self, response):
-        if hasattr(response, 'choices'):
-            message = response.choices[0].message
-            message_dict = {
-                "content": message.content,
-                "role": "assistant",
-            }
-            
-            if hasattr(message, 'tool_calls') and message.tool_calls:
-                tool_calls_list = []
-                for tool_call in message.tool_calls:
-                    tool_calls_list.append({
-                        "id": tool_call.id,
-                        "function": {
-                            "name": tool_call.function.name,
-                            "arguments": tool_call.function.arguments
-                        },
-                        "type": "function"
-                    })
-                message_dict["tool_calls"] = tool_calls_list
-            
-            return {
-                "choices": [{
-                    "message": message_dict,
-                    "index": 0,
-                    "finish_reason": "stop"
-                }]
-            }
-        else:
-            return response
+        return response.choices[0].message  # 直接返回Message对象
