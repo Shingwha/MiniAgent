@@ -1,13 +1,14 @@
 from openai import OpenAI
 from typing import Union, List, Dict, Any, Optional
 from .message import Message,Conversation
+import json
 
 class ChatOpenAI:
     def __init__(
             self,
-            api_key: str, 
-            base_url: str, 
-            model_name: str, 
+            api_key: str = None,
+            base_url: str = None,
+            model_name: str = None,
             stream: bool = False,
             temperature: float = 0.7,
             max_tokens: int  = 1024,
@@ -23,13 +24,21 @@ class ChatOpenAI:
         self.max_tokens: int  = max_tokens
         self.top_p: float = top_p
         self.frequency_penalty: float = frequency_penalty
-
-        self.tool_choices = "auto"
         
         self.stream: bool = stream
 
-        self.client = OpenAI(api_key=self.api_key, base_url=self.base_url)
+        self.client = None
 
+
+
+    def set_api_key(self, api_key: str):
+        self.api_key = api_key
+
+    def set_base_url(self, base_url: str):
+        self.base_url = base_url
+
+    def set_model_name(self, model_name: str):
+        self.model_name = model_name
 
     def set_stream(self, stream: bool):
         self.stream = stream
@@ -49,6 +58,29 @@ class ChatOpenAI:
     def set_tool_choices(self, tool_choices: list):
         self.tool_choices = tool_choices
 
+    def load_config(self, file_path: str):
+        try:
+            with open(file_path, "r") as f:
+                config = json.load(f)
+                self.api_key = config.get("api_key")
+                self.base_url = config.get("base_url")
+                self.model_name = config.get("model_name")
+        except Exception as e:
+            print(f"Error loading config from {file_path}: {e}")
+
+    def save_config(self, file_path: str):
+        config = {
+            "api_key": self.api_key,
+            "base_url": self.base_url,
+            "model_name": self.model_name,
+        }
+        try:
+            with open(file_path, "w") as f:
+                json.dump(config, f)
+        except Exception as e:
+            print(f"Error saving config to {file_path}: {e}")
+
+
     def generate(
                 self, 
                 messages: Union[List[Dict[str,Any]], Conversation],
@@ -61,7 +93,7 @@ class ChatOpenAI:
         }
         if tools:
             kwargs["tools"] = tools
-            # kwargs["tool_choices"] = self.tool_choices
-
+        
+        self.client = OpenAI(api_key=self.api_key, base_url=self.base_url)
         response = self.client.chat.completions.create(**kwargs)
         return response.choices[0].message  # 直接返回Message对象

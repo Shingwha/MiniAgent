@@ -53,34 +53,26 @@ def get_time():
 
 
 # OpenAI兼容的API Key和模型名称
-# llm = ChatOpenAI(
-#     model_name="hunyuan-turbos-20250226",
-#     api_key="sk-weyVGyaRPkWjxgROsg27xzFLNIVScfXfNUs9nb3FKcvMxZLz",
-#     base_url="https://api.hunyuan.cloud.tencent.com/v1")
+llm = ChatOpenAI()
+llm.load_config("glm.json")
 
-llm = ChatOpenAI(
-    model_name="glm-4-air-0111",
-    api_key="1f4fff3f274d4f8990754cd1ee66e001.Eud0KAAYoLLrLE0h",
-    base_url="https://open.bigmodel.cn/api/paas/v4/")
 
-# 创建Agent并添加工具
 agent = Agent(llm=llm, tools=[get_weather, get_time])
 response = agent.run("今天几号了？现在几点钟了")
-print(f"\n最终回答：\n{response[-1]['content']}")
+print(f"\n最终回答 -> {response[-1]['content']}")
 
 
 response = agent.run("北京、杭州、上海今天的天气怎么样？")
-print(f"\n最终回答：\n{response[-1]['content']}")
+print(f"\n最终回答 -> {response[-1]['content']}")
 
-# 重置对话历史并切换工具
 agent.reset_conversation()
 agent.set_tools([calculate])  # 切换到计算工具
 
 response = agent.run("666*9999-1458020")
-print(f"\n最终回答：\n{response[-1]['content']}")
+print(f"\n最终回答 -> {response[-1]['content']}")
 
 agent.reset_conversation()
 
 agent.remove_tool("get_weather")  # 移除天气工具
 response = agent.run("北京现在什么天气")
-print(f"\n最终回答：\n{response[-1]['content']}")
+print(f"\n最终回答 -> {response[-1]['content']}")
