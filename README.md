@@ -1,112 +1,84 @@
+# MiniAgent - 轻量级智能代理框架
 
-# Agent Framework
+🌟 **简洁高效的语言模型交互框架**  
+专为快速集成大语言模型（LLM）和工具调用设计，轻量化、模块化，适合构建智能对话系统和自动化工作流。
 
-一个基于LLM的智能代理框架，支持工具扩展和对话管理，轻松构建AI应用。
+---
 
-## 功能特性
+## 🚀 核心特性
 
-- 🤖 **智能代理**：协调LLM与工具调用，支持多轮对话
-- 🧰 **工具扩展**：通过装饰器快速创建工具，支持函数自动参数解析
-- 💬 **对话管理**：完整记录系统/用户/助手/工具消息，支持对话重置
-- 🔌 **OpenAI集成**：内置ChatOpenAI客户端，支持模型参数配置
+- **轻量化设计**：代码精简，无冗余依赖，快速部署
+- **工具热插拔**：通过装饰器一键定义工具，运行时动态增删
+- **多模型兼容**：支持OpenAI及兼容API的大模型（如GLM等）
+- **对话管理**：自动维护上下文，支持工具调用中间状态
+- **灵活配置**：实时调整温度值、最大token等模型参数
 
-## 安装
+---
 
-```bash
-pip install openai  # 基础依赖
-# 将本框架代码放入项目目录即可使用
-```
+## 🛠️ 快速开始
 
-
-## 快速开始
-
-### 基本使用示例
+### 基础使用
 ```python
 from MiniAgent.core import ChatOpenAI, Agent, tool
 
+# 定义工具
+@tool(description="获取当前时间")
+def get_time():
+    return time.strftime("%Y-%m-%d %H:%M:%S")
+
 # 初始化LLM
-llm = ChatOpenAI(api_key="your-api-key", model_name="gpt-3.5-turbo")
+llm = ChatOpenAI(api_key="YOUR_KEY", model_name="glm-4", base_url="https://your.api")
 
-# 创建工具
-@tool()
-"""
-计算两个数的和
-"""
-def add(a: int, b: int):
-    return a + b
+# 创建Agent
+agent = Agent(llm=llm, tools=[get_time])
 
-# 创建代理
-agent = Agent(llm=llm, tools=[add])
-
-# 运行查询
-response = agent.run("请计算12加5等于多少？")
-print(response)
+# 运行对话
+response = agent.run("现在几点？")
+print(response[-1]['content'])  # 输出：当前时间：2024-03-15 14:30:00
 ```
 
-### 自定义工具示例
-```python
-@tool(description="获取指定城市的天气")
-def get_weather(city: str):
-    # 这里实现实际的天气API调用
-    return f"{city} 晴，25℃"
+---
 
-agent = Agent(llm=llm, tools=[get_weather])
-agent.run("上海现在天气怎么样？")
-```
+## 📦 核心组件
 
-## 核心模块说明
+### `Agent`
+- 管理工具集和对话流程
+- 自动协调LLM推理与工具调用
+- 支持运行时配置更新
 
-### 🧩 Agent 类
-- `run()`: 执行对话流程，自动处理工具调用
-- 支持动态添加/移除工具
-- 维护对话历史上下文
-
-### 🔧 Tool 系统
-- 使用`@tool`装饰器快速创建工具
-- 自动生成工具参数schema
-- 支持类工具（继承`Tool`类）和函数工具
-
-### 🌐 ChatOpenAI
-- 支持OpenAI API完整参数配置
+### `ChatOpenAI`
+- 兼容主流大模型API
+- 支持参数动态调整
 - 提供配置保存/加载功能
-- 支持工具调用参数自动传递
 
-### 📩 消息系统
-- `Message`类：标准化消息格式
-- `Conversation`类：管理对话历史
-- 支持工具调用消息和结果记录
-
-## 配置指南
-
-1. 设置API密钥：
+### `Tool`
 ```python
-llm = ChatOpenAI(api_key="sk-...")
-# 或通过配置文件
-llm.load_config("config.json")
+@tool  # 用装饰器快速定义工具
+def calculate(expression: str):
+    """执行数学计算"""
+    return eval(expression)
 ```
 
-2. 模型参数设置：
+### `Conversation`
+- 自动维护消息历史
+- 支持系统/用户/助手/工具多种角色
+- 提供对话上下文序列化
+
+---
+
+## 📚 最佳实践
 ```python
-llm.set_temperature(0.5)
-llm.set_max_tokens(512)
+# 多工具协同示例
+agent.set_tools([get_weather, calculate])
+
+response = agent.run("北京气温如何？如果明天下雨，计算15*0.8")
+# 1. 调用天气查询
+# 2. 执行数学计算
+# 3. 综合生成最终回复
 ```
 
-## 进阶功能
+---
 
-### 自定义系统提示
-```python
-agent = Agent()
-agent.set_system_prompt("你是一个智能助手，请根据用户的问题，选择合适的工具来回答用户的问题。")
-```
-
-### 查看对话历史
-```python
-for msg in agent.conversation.messages:
-    print(f"[{msg.role}] {msg.content}")
-```
-
-## 许可证
-MIT License
-```
-
-> 注意：实际使用时需要替换OpenAI API密钥，并确保网络可以访问OpenAI服务。建议将敏感配置（如API密钥）存储在环境变量或配置文件中。
+## 💡 设计理念
+- **轻如鸿毛**：核心代码<500行，无复杂依赖
+- **灵活扩展**：通过继承轻松定制组件
