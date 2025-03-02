@@ -29,9 +29,19 @@ class Agent:
     def add_tool(self, tool: Union[Tool, Callable]) -> Optional[str]:
         self.tools.append(tool)
 
-    def reset(self):
+    def remove_tool(self, tool: Union[Tool, Callable]) -> Optional[str]:
+        if tool in self.tools:
+            self.tools.remove(tool)
+
+    def reset_conversation(self):
         self.conversation = Conversation()
+
+    def reset_tools(self):
         self.tools = []
+
+    def reset(self):
+        self.reset_conversation()
+        self.reset_tools()
 
     def run(self,query: str = None):
         if self.conversation.messages == []:
@@ -54,7 +64,6 @@ class Agent:
 
 
     def _execute_tool_call(self, tool_call: dict):
-        """执行单个工具调用"""
         try:
             tool_name = tool_call.function.name
             arguments = json.loads(tool_call.function.arguments)
@@ -64,8 +73,9 @@ class Agent:
                 tool_instance = self.get_tool_instance(tool)
                 if tool_instance.name == tool_name:
                     result = tool_instance.execute(**arguments)
+                    print(f"\nExecuting tool <{tool_name}> with arguments {arguments} -> Result: {result}")
                     return str(result)
-            return f"Tool {tool_name} not found"
+            return f"Tool <{tool_name}> not found"
         except Exception as e:
             return f"Tool error: {str(e)}"
 

@@ -19,10 +19,15 @@ def get_weather(city: str, date: str = "today"):
         天气信息字符串
     """
     # 这里应该是实际的天气API调用
+    if city == "北京":
+        return f"{city}在{date}的天气晴朗，温度25°C"
+    elif city == "杭州":
+        return f"{city}在{date}的天气多云，温度20°C"
+    elif city == "上海":
+        return f"{city}在{date}的天气阴，温度22°C"
     return f"{city}在{date}的天气晴朗，温度25°C"
 
-# 也可以自定义名称和描述
-@tool()
+@tool
 def calculate(expression: str):
     """计算数学表达式
     
@@ -37,8 +42,17 @@ def calculate(expression: str):
     except Exception as e:
         return f"计算错误: {str(e)}"
 
+@tool
+def get_time():
+    """获取当前时间
+    
+    Returns:
+        当前时间字符串
+    """
+    return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-# 创建LLM实例
+
+# OpenAI兼容的API Key和模型名称
 # llm = ChatOpenAI(
 #     model_name="hunyuan-turbos-20250226",
 #     api_key="sk-weyVGyaRPkWjxgROsg27xzFLNIVScfXfNUs9nb3FKcvMxZLz",
@@ -50,31 +64,23 @@ llm = ChatOpenAI(
     base_url="https://open.bigmodel.cn/api/paas/v4/")
 
 # 创建Agent并添加工具
-agent = Agent(llm=llm, tools=[get_weather])
+agent = Agent(llm=llm, tools=[get_weather, get_time])
+response = agent.run("今天几号了？现在几点钟了")
+print(f"\n最终回答：\n{response[-1]['content']}")
 
-start_time = time.time()
+
 response = agent.run("北京、杭州、上海今天的天气怎么样？")
-end_time = time.time()
-print(response)
-print(f"\n最终回答： {response[-1]['content']}")
-print(f"\n执行时间: {end_time - start_time:.2f}秒")
+print(f"\n最终回答：\n{response[-1]['content']}")
 
 # 重置对话历史并切换工具
-agent.reset()
+agent.reset_conversation()
 agent.set_tools([calculate])  # 切换到计算工具
 
-start_time = time.time()
 response = agent.run("666*9999-1458020")
-end_time = time.time()
-print(response)
-print(f"\n最终回答： {response[-1]['content']}")
-print(f"\n执行时间: {end_time - start_time:.2f}秒")
+print(f"\n最终回答：\n{response[-1]['content']}")
 
-# 重置对话历史并切换工具
-agent.reset()
-start_time = time.time()
-response = agent.run("兵马俑在哪里")
-end_time = time.time()
-print(response)
-print(f"\n最终回答： {response[-1]['content']}")
-print(f"执行时间: {end_time - start_time:.2f}秒")
+agent.reset_conversation()
+
+agent.remove_tool("get_weather")  # 移除天气工具
+response = agent.run("北京现在什么天气")
+print(f"\n最终回答：\n{response[-1]['content']}")
