@@ -6,6 +6,7 @@ from .message import Message, Conversation
 
 @dataclass
 class ChatOpenAI:
+    name: str = None
     api_key: Optional[str] = None
     base_url: Optional[str] = None
     model_name: Optional[str] = None
@@ -16,6 +17,10 @@ class ChatOpenAI:
     frequency_penalty: Optional[float] = None
     tool_choices: Optional[list] = None
     client: Optional[OpenAI] = None
+
+    def __post_init__(self):
+        if self.name is None:
+            self.name = self.__class__.__name__
 
     def set_api_key(self, api_key: str):
         self.api_key = api_key

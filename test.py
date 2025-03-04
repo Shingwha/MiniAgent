@@ -43,7 +43,6 @@ llm.load_config("glm.json")
 # 或者直接用下面
 # llm = ChatOpenAI(api_key="your_api_key", model_name="your_model_name",base_url="your_base_url")
 
-
 agent = Agent(llm=llm, tools=[get_weather, get_time])
 
 response = agent.run("今天几号了？现在几点钟了")

@@ -13,6 +13,13 @@ class Agent:
     system_prompt: str = "你是一个智能代理，协调LLM和工具使用"
     conversation: Conversation = field(default_factory=Conversation)
 
+    def __post_init__(self):
+        if self.name is None:
+            self.name = self.__class__.__name__
+
+    def __repr__(self):
+        return f"Agent(name={self.name}, llm={self.llm.name}, tools={[tool.name for tool in self.tools]}, system_prompt={self.system_prompt})"
+
     def set_name(self, name: str):
         self.name = name
 
@@ -73,10 +80,11 @@ class Agent:
                 if tool_name in tool_dict:
                     tool = tool_dict[tool_name]
                     result = tool.execute(**arguments)
-                    print(f"\nExecuting tool <{tool_name}> with arguments {arguments} -> Result: {result}")
+                    print(f"\nExecuting <{tool_name}> with {arguments} -> Result: {result}")
                     results[tool_call.id] = str(result)
                 else:
                     results[tool_call.id] = f"Tool <{tool_name}> not found: "
             except Exception as e:
                 results[tool_call.id] = f"Error executing tool <{tool_name}>: {e}"
         return results
+

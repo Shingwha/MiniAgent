@@ -10,6 +10,9 @@ class Tool:
         self.func = func
         self.parameters = self._get_parameters()
 
+    def __repr__(self):
+        return self.to_dict().__repr__()
+
     def _get_parameters(self) -> Dict:
         signature = inspect.signature(self.func)
         parameters = {}
@@ -52,3 +55,9 @@ def tool(func=None, *, name=None, description=None):
     if func is None:
         return decorator
     return decorator(func)
+
+if __name__ == "__main__":
+    @tool(name="get_weather", description="获取天气")
+    def get_weather(city: str) -> str:
+        return f"{city}现在天气晴朗"
+
