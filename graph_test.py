@@ -11,9 +11,9 @@ agent_1 = Agent(llm = llm_1)
 agent_2 = Agent(llm = llm_2)
 
 start_node = START()
-end_node = END()
 test_node_1 = Node(name="test_node_1",agent=agent_1)
 test_node_2 = Node(name="test_node_2",agent=agent_2)
+end_node = END()
 
 workflow = Graph()
 workflow.add_node(start_node)
@@ -27,4 +27,4 @@ workflow.add_edge(test_node_2,end_node)
 
 result = workflow.run("长江黄河哪个更长")
 
-print(result)
+print(str(result))

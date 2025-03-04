@@ -38,7 +38,7 @@ def get_time():
 
 # OpenAI兼容的API Key和模型名称
 llm = ChatOpenAI()
-llm.load_config("hunyuan.json")
+llm.load_config("hunyuan.json") # 格式为{"api_key":"your_api_key","model_name":"your_model_name","base_url":"your_base_url"}
 
 # 或者直接用下面
 # llm = ChatOpenAI(api_key="your_api_key", model_name="your_model_name",base_url="your_base_url")
