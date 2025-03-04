@@ -61,7 +61,7 @@ class Agent:
             else:
                 self.conversation.add_assistant_message(content)
                 break
-        return self.conversation.get_messages()
+        return content
 
     def _execute_tool_calls(self, tool_calls: List[dict]):
         tool_dict = {tool.name: tool for tool in self.tools} if self.tools else {}
