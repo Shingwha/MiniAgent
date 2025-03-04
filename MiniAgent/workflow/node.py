@@ -4,7 +4,7 @@ import uuid
 
 class Node:
 
-    def __init__(self,name: str, agent: Optional[Agent] = None, is_start: bool = False, is_end: bool = False):
+    def __init__(self,name: str = None, agent: Optional[Agent] = None, is_start: bool = False, is_end: bool = False):
         self.name = name or self.__class__.__name__
         self.agent = agent
         self.in_edges = set()
@@ -14,24 +14,26 @@ class Node:
         self.is_start = is_start
         self.is_end = is_end
 
-    def run(self):
+    def run(self,query):
         if self.agent:
-            result = self.agent.run()
+            result = self.agent.run(str(query))
         else:
             raise Exception(f"Agent is not set for {self.name}")
         return result
 
 
 class START(Node):
+    
+    def __init__(self):
+        super().__init__(is_start=True)
 
-    self.is_start = True
-
-    def run(self):
+    def run(self, query):
         return self.info_from_pre_nodes
 
 class END(Node):
     
-    self.is_end = True
+    def __init__(self):
+        super().__init__(is_end=True)
 
-    def run(self):
+    def run(self, query):
         return self.info_from_pre_nodes

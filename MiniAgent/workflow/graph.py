@@ -61,10 +61,11 @@ class Graph:
         self.sorted_nodes[0].info_from_pre_nodes = query
         for node in self.sorted_nodes:
             print(f"{node.name} is running")
-            result = node.run()
+            result = node.run(node.info_from_pre_nodes)
+            print(f"{node.name} result: {result}")
             node.result = result
             for edge in node.out_edges:
-                edge.end_node.info_from_pre_nodes.append(result)
+                edge.end_node.info_from_pre_nodes.append(str(result))
         return self.sorted_nodes[-1].result
 
 
