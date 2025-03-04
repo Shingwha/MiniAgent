@@ -80,7 +80,7 @@ class Agent:
                 if tool_name in tool_dict:
                     tool = tool_dict[tool_name]
                     result = tool.execute(**arguments)
-                    print(f"\nExecuting <{tool_name}> with {arguments} -> Result: {result}")
+                    print(f"\n{self.name}: Executing <{tool_name}> with {arguments} -> Result: {result}")
                     results[tool_call.id] = str(result)
                 else:
                     results[tool_call.id] = f"Tool <{tool_name}> not found: "

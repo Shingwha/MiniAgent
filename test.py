@@ -38,28 +38,28 @@ def get_time():
 
 # OpenAI兼容的API Key和模型名称
 llm = ChatOpenAI()
-llm.load_config("glm.json")
+llm.load_config("hunyuan.json")
 
 # 或者直接用下面
 # llm = ChatOpenAI(api_key="your_api_key", model_name="your_model_name",base_url="your_base_url")
 
-agent = Agent(llm=llm, tools=[get_weather, get_time])
+agent = Agent(name="general agent",llm=llm, tools=[get_weather, get_time])
 
 response = agent.run("今天几号了？现在几点钟了")
-print(f"\n最终回答 -> {response}")
+print(f"\n{response}")
 
 
 response = agent.run("北京、杭州、上海今天的天气怎么样？")
-print(f"\n最终回答 -> {response}")
+print(f"\n{response}")
 
 agent.clear_conversation()
 agent.set_tools([calculate])  # 切换到计算工具
 
 response = agent.run("666*9999-1458020")
-print(f"\n最终回答 -> {response}")
+print(f"\n{response}")
 
 agent.clear_conversation()
 
 agent.remove_tool("get_weather")  # 移除天气工具后的回复
 response = agent.run("北京现在什么天气")
-print(f"\n最终回答 -> {response}")
+print(f"\n{response}")

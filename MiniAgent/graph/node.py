@@ -7,7 +7,8 @@ class Node:
     def __init__(self,name: str, agent: Optional[Agent] = None):
         self.name = name or self.__class__.__name__
         self.agent = agent
-        self.edges = []
+        self.in_edges = set()
+        self.out_edges = set()
 
     def run(self):
         if self.agent:
@@ -15,3 +16,12 @@ class Node:
         else:
             raise Exception(f"Agent is not set for {self.name}")
         return result
+
+
+class START(Node):
+    
+    pass
+
+class END(Node):
+    
+    pass
