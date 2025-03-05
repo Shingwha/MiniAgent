@@ -20,9 +20,7 @@ llm = ChatOpenAI(api_key="your_key", model_name="deepseek-v3", base_url="https:/
 agent = Agent(llm=llm, tools=[get_weather])
 print(agent.run("北京天气如何？"))
 ```
-<div style="text-align: center;">
-<img src="https://github.com/user-attachments/assets/7b9d5536-38ca-496b-a65e-60ee927154a0" width="50%" alt="image">
-</div>
+![image](https://github.com/user-attachments/assets/7da5a16d-c2ac-47c1-8bc7-3f1fa5e7581b)
 
 ## 核心模块
 
@@ -40,6 +38,7 @@ print(agent.run("北京天气如何？"))
 ```python
 from MiniAgent.core import Agent, ChatOpenAI, tool
 from MiniAgent.workflow import Graph, Node, START, END
+
 
 # 模拟获取天气信息的工具
 @tool
@@ -70,9 +69,9 @@ agent = Agent(llm=llm)
 
 # 创建节点
 start_node = START()
-get_weather_node = Node(name="get_weather", agent=agent, tool=get_weather_info)
-get_news_node = Node(name="get_news", agent=agent, tool=get_hot_news)
-generate_suggestions_node = Node(name="generate_suggestions", agent=agent, tool=generate_suggestions)
+get_weather_node = Node(name="get_weather", agent=agent, tools=[get_weather_info])
+get_news_node = Node(name="get_news", agent=agent, tools=[get_hot_news])
+generate_suggestions_node = Node(name="generate_suggestions", agent=agent, tools=[generate_suggestions])
 generate_newsletter_node = Node(name="generate_newsletter", agent=agent)
 end_node = END()
 
@@ -97,7 +96,7 @@ workflow.add_edge(generate_suggestions_node, generate_newsletter_node)
 workflow.add_edge(generate_newsletter_node, end_node)
 
 # 运行工作流
-result = workflow.run("生成早报")
+result = workflow.run("开始生成")
 print(result)
 
 ```
