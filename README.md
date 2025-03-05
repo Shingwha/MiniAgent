@@ -37,7 +37,7 @@ print(agent.run("北京天气如何？"))
 
 ```python
 from MiniAgent.core import Agent, ChatOpenAI, tool
-from MiniAgent.workflow import Graph, Node, START, END![exported_image (2)](https://github.com/user-attachments/assets/a8c70437-ddb5-4764-b4a3-333b3caf6831)
+from MiniAgent.workflow import Graph, Node, START, END
 
 
 # 模拟获取天气信息的工具
