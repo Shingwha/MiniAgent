@@ -41,19 +41,19 @@ from MiniAgent.workflow import Graph, Node, START, END
 
 
 # 模拟获取天气信息的工具
-@tool
+@tool(description="获取天气信息")
 def get_weather_info():
     # 这里简单模拟天气信息，实际中可以调用天气 API
     return "今天天气晴朗，气温 20 - 25 摄氏度"
 
 # 模拟获取热点新闻的工具
-@tool
+@tool(description="获取热点新闻")
 def get_hot_news():
     # 这里简单模拟热点新闻，实际中可以调用新闻 API
-    return "今日热点新闻：科技公司发布新的智能产品，引发市场关注。"
+    return "今日热点新闻：科技公司发布新的智能产品，引发市场关注。雷军主讲汽车发布会，发布小米SU7"
 
 # 模拟生成建议的工具
-@tool
+@tool(description="根据天气信息生成建议")
 def generate_suggestions(weather):
     if "晴朗" in weather:
         return "天气晴朗，适合外出活动，记得做好防晒。"
@@ -65,14 +65,16 @@ llm = ChatOpenAI()
 llm.load_config("hunyuan.json")
 
 # 创建 Agent
-agent = Agent(llm=llm)
-
+get_weather_agent = Agent(llm=llm,tools=[get_weather_info],content_prompt="当你收到开始的时候，你需要调用工具获取天气：")
+get_news_agent = Agent(llm=llm,tools=[get_hot_news],content_prompt="当你收到开始的时候，你需要调用工具获取热点新闻：")
+generate_suggestions_agent = Agent(llm=llm,tools=[generate_suggestions],content_prompt="当你接收到天气信息的时候，你需要给出对应的建议：")
+generate_newsletter_agent = Agent(llm=llm,content_prompt="你将会接收到不同类别的信息，你需要对它们进行整合，生成一个早起人专属的早报：")
 # 创建节点
 start_node = START()
-get_weather_node = Node(name="get_weather", agent=agent, tools=[get_weather_info])
-get_news_node = Node(name="get_news", agent=agent, tools=[get_hot_news])
-generate_suggestions_node = Node(name="generate_suggestions", agent=agent, tools=[generate_suggestions])
-generate_newsletter_node = Node(name="generate_newsletter", agent=agent)
+get_weather_node = Node(name="get_weather", agent=get_weather_agent)
+get_news_node = Node(name="get_news", agent=get_news_agent)
+generate_suggestions_node = Node(name="generate_suggestions", agent=generate_suggestions_agent)
+generate_newsletter_node = Node(name="generate_newsletter", agent=generate_newsletter_agent)
 end_node = END()
 
 # 创建图
