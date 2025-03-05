@@ -11,6 +11,7 @@ class Agent:
     llm: Optional[object] = None
     tools: List[Union[Tool, Callable]] = field(default_factory=list)
     system_prompt: str = "你是一个智能代理，协调LLM和工具使用"
+    content_prompt: str = None
     conversation: Conversation = field(default_factory=Conversation)
 
     def __post_init__(self):
@@ -18,7 +19,7 @@ class Agent:
             self.name = self.__class__.__name__
 
     def __repr__(self):
-        return f"Agent(name={self.name}, llm={self.llm.name}, tools={[tool.name for tool in self.tools]}, system_prompt={self.system_prompt})"
+        return f"Agent(name={self.name}, llm={self.llm.name}, tools={[tool.name for tool in self.tools]}, system_prompt={self.system_prompt}, content_prompt={self.content_prompt}, conversation={self.conversation})"
 
     def set_name(self, name: str):
         self.name = name
@@ -31,6 +32,9 @@ class Agent:
 
     def set_system_prompt(self, system_prompt: str):
         self.system_prompt = system_prompt
+
+    def set_content_prompt(self, content_prompt: str):
+        self.content_prompt = content_prompt
 
     def add_tool(self, tool: Union[Tool, Callable]) -> Optional[str]:
         self.tools.append(tool)
@@ -52,6 +56,8 @@ class Agent:
     def run(self, query: str = None):
         if not self.conversation.messages:
             self.conversation.add_system_message(self.system_prompt)
+            if self.content_prompt:
+                query = self.content_prompt + query
         self.conversation.add_user_message(query)
         while True:
             response = self.llm.generate(
