@@ -46,20 +46,15 @@ llm.load_config("hunyuan.json") # 格式为{"api_key":"your_api_key","model_name
 agent = Agent(name="general agent",llm=llm, tools=[get_weather, get_time])
 
 response = agent.run("今天几号了？现在几点钟了")
-print(f"\n{response}")
-
 
 response = agent.run("北京、杭州、上海今天的天气怎么样？")
-print(f"\n{response}")
 
 agent.clear_conversation()
 agent.set_tools([calculate])  # 切换到计算工具
 
 response = agent.run("666*9999-1458020")
-print(f"\n{response}")
 
 agent.clear_conversation()
 
 agent.remove_tool("get_weather")  # 移除天气工具后的回复
 response = agent.run("北京现在什么天气")
-print(f"\n{response}")

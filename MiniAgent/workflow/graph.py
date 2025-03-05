@@ -4,11 +4,12 @@ from collections import deque
 
 class Graph:
 
-    def __init__(self):
+    def __init__(self, name: str = None):
         self.nodes = set()
         self.edges = set()
         self.is_built = False
         self.sorted_nodes = []
+        self.name = name or self.__class__.__name__
 
     def add_node(self, node) -> None:
         self.nodes.add(node)
@@ -50,19 +51,18 @@ class Graph:
             raise Exception("Graph build failed: cycle detected")
         self.is_built = True
         self.sorted_nodes = sorted_nodes
-        print("Graph built successfully")
+        print(f"<{self.name}>:built successfully")
 
     def run(self,query):
         if self.is_built:
             pass
         else:
             self.build()
-        print("Graph is running")
+        print(f"<{self.name}>:running")
         self.sorted_nodes[0].info_from_pre_nodes = query
         for node in self.sorted_nodes:
-            print(f"{node.name} is running")
             result = node.run(node.info_from_pre_nodes)
-            print(f"{node.name} result: {result}")
+            print(f"<{node.name}>:{result}")
             node.result = result
             for edge in node.out_edges:
                 edge.end_node.info_from_pre_nodes.append(str(result))
