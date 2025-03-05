@@ -20,6 +20,9 @@ llm = ChatOpenAI(api_key="your_key", model_name="deepseek-v3", base_url="https:/
 agent = Agent(llm=llm, tools=[get_weather])
 print(agent.run("北京天气如何？"))
 ```
+<div style="text-align: center;">
+<img src="https://github.com/user-attachments/assets/7b9d5536-38ca-496b-a65e-60ee927154a0" width="50%" alt="image">
+</div>
 
 ## 核心模块
 
@@ -32,6 +35,7 @@ print(agent.run("北京天气如何？"))
 | `Message`  | 对话消息结构，支持工具调用追踪       |
 
 ## 示例场景
+
 
 ```python
 from MiniAgent.core import Agent, ChatOpenAI, tool
@@ -97,4 +101,4 @@ result = workflow.run("生成早报")
 print(result)
 
 ```
-![exported_image](https://github.com/user-attachments/assets/dd8e32ac-6286-4947-b39a-a345a9ff69d0)
+![image](https://github.com/user-attachments/assets/dd8e32ac-6286-4947-b39a-a345a9ff69d0)
