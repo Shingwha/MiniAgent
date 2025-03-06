@@ -52,6 +52,7 @@ class Graph:
         self.is_built = True
         self.sorted_nodes = sorted_nodes
         print(f"<{self.name}> -> built successfully")
+        print(f"<{self.name}> -> sorted nodes: {[node.name for node in self.sorted_nodes]}")
 
     def run(self,query=""):
         if self.is_built:

@@ -53,6 +53,12 @@ class Agent:
         self.clear_conversation()
         self.clear_tools()
 
+    def copy(self):
+        return Agent(
+            llm=self.llm,
+            tools=self.tools,
+            content_prompt=self.content_prompt)
+
     def run(self, query: str = None):
         if not self.conversation.messages:
             self.conversation.add_system_message(self.system_prompt)
