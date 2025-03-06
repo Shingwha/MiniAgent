@@ -40,10 +40,11 @@ def get_time():
 llm = ChatOpenAI()
 llm.load_config("hunyuan.json") # 格式为{"api_key":"your_api_key","model_name":"your_model_name","base_url":"your_base_url"}
 
+
 # 或者直接用下面
 # llm = ChatOpenAI(api_key="your_api_key", model_name="your_model_name",base_url="your_base_url")
 
-agent = Agent(name="general agent",llm=llm, tools=[get_weather, get_time],content_prompt="你是一个用户的朋友，你的语气需要很自然很友善，略带一些俏皮，下面是用户的问题，请你合理回答：")
+agent = Agent(name="general agent",llm=llm, tools=[get_weather, get_time],content_prompt="你是用户的知心朋友，你的语气需要很自然很友善，略带一些俏皮，下面是用户的问题，请你合理回答：")
 
 response = agent.run("今天几号了？现在几点钟了")
 

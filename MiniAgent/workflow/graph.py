@@ -51,21 +51,22 @@ class Graph:
             raise Exception("Graph build failed: cycle detected")
         self.is_built = True
         self.sorted_nodes = sorted_nodes
-        print(f"<{self.name}>:built successfully")
+        print(f"<{self.name}> -> built successfully")
 
-    def run(self,query):
+    def run(self,query=""):
         if self.is_built:
             pass
         else:
             self.build()
-        print(f"<{self.name}>:running")
+        print(f"<{self.name}> -> start running")
         self.sorted_nodes[0].info_from_pre_nodes = query
         for node in self.sorted_nodes:
-            result = node.run(node.info_from_pre_nodes)
-            print(f"<{node.name}>:{result}")
+            print(f"<{self.name}> -> running node -> <{node.name}>")
+            result = node.run(str(node.info_from_pre_nodes))
+            print(f"<{node.name}> -> result: {result}")
             node.result = result
             for edge in node.out_edges:
-                edge.end_node.info_from_pre_nodes.append(str(result))
+                edge.end_node.info_from_pre_nodes.append(result)
         return self.sorted_nodes[-1].result
 
 
