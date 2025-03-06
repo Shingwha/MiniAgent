@@ -1,6 +1,5 @@
 from MiniAgent.workflow.autoflow import AutoFLow
 from MiniAgent.core import Agent,ChatOpenAI
-from MiniAgent.workflow.autoflow import AutoFLow
 
 if __name__ == '__main__':
     chat_llm = ChatOpenAI()
