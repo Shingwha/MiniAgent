@@ -24,7 +24,9 @@ class AutoFLow:
             3.每个node有name和description属性
             4.必须以START节点开始，以END节点结束
             5.节点在处理输入信息后将结果作为输出信息
-            6.节点的输出作为下一个节点的输入依据
+            6.节点之间互相独立，只能获取上一个节点的输出信息作为输入依据
+            7.description必须明确说明，不能有模糊的描述
+            8.在END节点之前，必须有一个节点总结所有节点（不包括START）的输出信息，并将总结信息作为输出信息
             7.格式需要和下方example一样
             8.以```xml开头，以```结尾，不需要其他内容
 
@@ -37,7 +39,7 @@ class AutoFLow:
                     <node name="get_weather" description="你需要获取天气信息" />
                     <node name="get_news" description="你需要获取今日热点新闻" />
                     <node name="get_suggestion" description="你需要根据天气信息给出建议，天气信息如下：" />
-                    <node name="generate_report" description="你需要总结天气、建议和新闻生成早报，你获得的信息如下：" />
+                    <node name="generate_report" description="你需要总结天气、建议和新闻生成早报，你将收到一些杂乱的信息，但请你自己整理信息并且给出逻辑清晰的早报，你获得的信息如下：" />
                     <node name="END" description="流程结束" />
                 </nodes>
                 <edges>

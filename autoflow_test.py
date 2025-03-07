@@ -1,42 +1,20 @@
 from MiniAgent.workflow.autoflow import AutoFLow
 from MiniAgent.core import Agent,ChatOpenAI,tool
-from MiniAgent.tools import duckduckgo_search
+from MiniAgent.tools import duckduckgo_search,fetch_web_content,BochaSearch
 import time
 
-@tool(description="获取天气信息")
-def get_weather_info():
-    # 这里简单模拟天气信息，实际中可以调用天气 API
-    return "今天天气晴朗，气温 20 - 25 摄氏度"
 
-@tool
 def get_time():
-    """
-    获取当前时间
-    """
+
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
-# 模拟生成建议的工具
-@tool(description="根据天气信息生成建议")
-def generate_suggestions(weather):
-    if "晴朗" in weather:
-        return "天气晴朗，适合外出活动，记得做好防晒。"
-    else:
-        return "天气可能多变，出门记得携带雨具。"
-
-@tool(description="生成arxiv论文")
-def get_arxiv_papers():
-    return "今日AI科技论文相关的有：微软发布AI Agent新架构，使得Agent集群协同工作更高效"
-
-
+bocha_search = BochaSearch(api_key='')
 
 if __name__ == '__main__':
     chat_llm = ChatOpenAI()
     chat_llm.load_config("doubao.json")
     chat_llm.set_max_tokens(4096)
-    agent = Agent(llm=chat_llm,tools=[get_weather_info, duckduckgo_search, generate_suggestions, get_arxiv_papers, get_time])
-    
+    agent = Agent(llm=chat_llm,tools=[bocha_search,fetch_web_content])
     af = AutoFLow(agent=agent)
-    af.build_graph("我需要一份早报，需要包括今明两天的天气，今日AI科技新闻，今日Arxiv论文，根据今天天气信息给我一些提醒和建议，将这些总结后发给我")
-    # af.build_graph("给我一份2024年新能源车企销量的报表")
-
-    af.graph.run()
+    af.build_graph(f"现在的时间是{get_time()},请帮我分析小米SU7ultra这辆车的销量以及竞争优势")
+    af.run()
