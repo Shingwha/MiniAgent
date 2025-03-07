@@ -13,6 +13,11 @@ class AutoFLow:
     # 获取流程代码
     def get_flow_code(self,query: str):
         if query:
+            content_prompt = "你将收到一个任务需求，请将这个任务拆成几个明确的子任务，子任务之间需要有联系，子任务数量不宜过多，每个子任务需要有目标和输入，有些子任务的输入数据是其他子任务的输出数据。"
+            agent_for_subtask = self.agent.copy()
+            agent_for_subtask.set_content_prompt(content_prompt)
+            response = agent_for_subtask.run(query)
+
             content_prompt = """
             1.你将接收到一个需求，请根据需求构建一个xml流程代码
             2.必须严格按照格式要求编写xml流程代码
@@ -29,10 +34,10 @@ class AutoFLow:
             <flowchart>
                 <nodes>
                     <node name="START" description="流程开始" />
-                    <node name="get_weather" description="获取天气信息" />
-                    <node name="get_news" description="获取今日热点新闻" />
-                    <node name="get_suggestion" description="根据天气信息给出建议" />
-                    <node name="generate_report" description="总结天气、建议和新闻生成早报" />
+                    <node name="get_weather" description="你需要获取天气信息" />
+                    <node name="get_news" description="你需要获取今日热点新闻" />
+                    <node name="get_suggestion" description="你需要根据天气信息给出建议，天气信息如下：" />
+                    <node name="generate_report" description="你需要总结天气、建议和新闻生成早报，你获得的信息如下：" />
                     <node name="END" description="流程结束" />
                 </nodes>
                 <edges>
@@ -49,9 +54,10 @@ class AutoFLow:
             现在请你根据要求和用户的需求，构建xml流程代码，并将代码发送给我。
             用户的需求是：
             """
-            self.agent.set_content_prompt(content_prompt)
-            result = self.agent.run(query)
-            return result
+            agent_for_xml = self.agent.copy()
+            agent_for_xml.set_content_prompt(content_prompt)
+            response = agent_for_xml.run(response)
+            return response
         else:
             print("请输入需求")
 
@@ -59,7 +65,6 @@ class AutoFLow:
     def add_to_graph(self, nodes: Dict, edges: List):
         node_objs = {}  
     
-        # 创建节点对象
         for node_id, data in nodes.items():
             if node_id == "START":
                 node = START()

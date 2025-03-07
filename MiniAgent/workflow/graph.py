@@ -64,7 +64,6 @@ class Graph:
         for node in self.sorted_nodes:
             print(f"<{self.name}> -> running node -> <{node.name}>")
             result = node.run(str(node.info_from_pre_nodes))
-            print(f"<{node.name}> -> result: {result}")
             node.result = result
             for edge in node.out_edges:
                 edge.end_node.info_from_pre_nodes.append(result)
