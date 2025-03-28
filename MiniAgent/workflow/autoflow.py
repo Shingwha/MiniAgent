@@ -89,7 +89,7 @@ class AutoFLow:
             if start_node and end_node:
                 self.graph.add_edge(start_node, end_node)
 
-    def parse_flow_code(self, xml_str: str) -> (Dict[str, Dict], List[tuple]):
+    def parse_flow_code(self, xml_str: str) -> Dict:
         nodes = {}
         edges = []
         node_matches = re.findall(
