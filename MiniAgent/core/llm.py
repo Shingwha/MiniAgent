@@ -2,7 +2,7 @@ from openai import OpenAI
 from typing import Union, List, Dict, Any, Optional
 from dataclasses import dataclass
 import json
-from .message import Message, Conversation
+from .message import Conversation
 
 @dataclass
 class ChatOpenAI:
@@ -11,8 +11,8 @@ class ChatOpenAI:
     base_url: Optional[str] = None
     model_name: Optional[str] = None
     stream: bool = False
-    temperature: float = 0.7
-    max_tokens: int = 1024
+    temperature: float = None
+    max_tokens: int = None
     top_p: Optional[float] = None
     frequency_penalty: Optional[float] = None
     tool_choices: Optional[list] = None
@@ -79,11 +79,13 @@ class ChatOpenAI:
         kwargs = {
             "model": self.model_name,
             "messages": messages,
-            "temperature": self.temperature,
-            "max_tokens": self.max_tokens,
         }
         if tools:
             kwargs["tools"] = tools
+        if self.temperature:
+            kwargs["temperature"] = self.temperature
+        if self.max_tokens:
+            kwargs["max_tokens"] = self.max_tokens
 
         self.client = OpenAI(api_key=self.api_key, base_url=self.base_url)
         response = self.client.chat.completions.create(**kwargs)

@@ -2,7 +2,7 @@ from MiniAgent.core.agent import Agent
 from MiniAgent.workflow.graph import Graph
 from MiniAgent.workflow.node import Node, START, END
 import re
-from typing import Dict, List, Any, Optional, Union, Callable
+from typing import Dict, List
 
 class AutoFLow:
 
@@ -13,8 +13,14 @@ class AutoFLow:
     # 获取流程代码
     def get_flow_code(self,query: str):
         if query:
-            content_prompt = "你将收到一个任务需求，请将这个任务拆成几个明确的子任务，子任务之间需要有联系，子任务数量不宜过多，每个子任务需要有目标和输入，有些子任务的输入数据是其他子任务的输出数据。"
+            content_prompt = """
+            1.你将收到一个问题，请将你这个问题拆成几个明确的子任务
+            2.子任务之间需要有联系，每个子任务需要有目标和输入，有些子任务的输入数据是其他子任务的输出数据。
+            3.如果用户的问题比较简单，请你适当拓展（比如定义、主要用途、核心功能、技术特点等等）
+            现在用户的问题如下：
+            """
             agent_for_subtask = self.agent.copy()
+            agent_for_subtask.clear_tools()
             agent_for_subtask.set_content_prompt(content_prompt)
             response = agent_for_subtask.run(query)
 
@@ -26,9 +32,8 @@ class AutoFLow:
             5.节点在处理输入信息后将结果作为输出信息
             6.节点之间互相独立，只能获取上一个节点的输出信息作为输入依据
             7.description必须明确说明，不能有模糊的描述
-            8.在END节点之前，必须有一个节点总结所有节点（不包括START）的输出信息，并将总结信息作为输出信息
-            7.格式需要和下方example一样
-            8.以```xml开头，以```结尾，不需要其他内容
+            8.格式需要和下方example一样
+            9.以```xml开头，以```结尾，不需要其他内容
 
             example:
             需求：需要一个早报，要包括天气信息、根据天气信息给出的建议、热点新闻
@@ -39,7 +44,7 @@ class AutoFLow:
                     <node name="get_weather" description="你需要获取天气信息" />
                     <node name="get_news" description="你需要获取今日热点新闻" />
                     <node name="get_suggestion" description="你需要根据天气信息给出建议，天气信息如下：" />
-                    <node name="generate_report" description="你需要总结天气、建议和新闻生成早报，你将收到一些杂乱的信息，但请你自己整理信息并且给出逻辑清晰的早报，你获得的信息如下：" />
+                    <node name="generate_report" description="你需要总结天气、建议和新闻生成早报，你将收到一些杂乱的信息，但请你自己整理信息并且给出逻辑清晰的早报，内容要尽可能全面，你获得的信息如下：" />
                     <node name="END" description="流程结束" />
                 </nodes>
                 <edges>

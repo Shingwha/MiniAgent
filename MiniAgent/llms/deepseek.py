@@ -1,5 +1,5 @@
 from MiniAgent.core import ChatOpenAI
-from typing import Literal, Optional
+from typing import Literal
 
 class DeepSeek(ChatOpenAI):
     def __init__(self,

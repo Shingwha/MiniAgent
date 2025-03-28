@@ -15,7 +15,7 @@ class BochaSearch(Tool):
             "query": query,
             "freshness": "noLimit",
             "summary": True,
-            "count": 10,
+            "count": 20,
         })
         headers = {
             'Authorization': self.api_key,
@@ -68,4 +68,4 @@ class BochaSearch(Tool):
 if __name__ == '__main__':
     tool = BochaSearch(api_key='')
     result = tool.execute(query='AI科技新闻')
-    print(results)
+    print(result)
