@@ -9,6 +9,7 @@ def calculate(expression: str):
     except Exception as e:
         return f"计算错误: {str(e)}"
 
+
 @tool(description="获取今天日期和现在的具体时间")
 def get_time():
     return time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
@@ -16,7 +17,9 @@ def get_time():
 
 # OpenAI兼容的API Key和模型名称
 llm = ChatOpenAI()
-llm.load_config("doubao.json") # 格式为{"api_key":"your_api_key","model_name":"your_model_name","base_url":"your_base_url"}
+llm.load_config(
+    "doubao.json"
+)  # 格式为{"api_key":"your_api_key","model_name":"your_model_name","base_url":"your_base_url"}
 
 # 或者直接用下面
 # llm = ChatOpenAI(api_key="your_api_key", model_name="your_model_name",base_url="your_base_url")
@@ -27,8 +30,10 @@ llm.load_config("doubao.json") # 格式为{"api_key":"your_api_key","model_name"
 # llm = Doubao(api_key="your_api_key")
 
 
-agent = Agent(name="general agent",llm=llm)
-agent.set_content_prompt("你是一个智能助手，当用户问你问题的时候，你需要合理拆解问题，然后分步骤调用工具集来回答用户的问题。用户的问题是：")
+agent = Agent(name="general agent", llm=llm)
+agent.set_content_prompt(
+    "你是一个智能助手，当用户问你问题的时候，你需要合理拆解问题，然后分步骤调用工具集来回答用户的问题。用户的问题是："
+)
 # agent.add_tool(duckduckgo_search)  # 添加duckduckgo搜索工具
 # agent.add_tool(fetch_web_content)  # 添加网页解析工具
 # agent.add_tool(BochaSearch(api_key="your_api_key"))  # 添加博查搜索工具

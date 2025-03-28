@@ -1,9 +1,9 @@
 from dataclasses import dataclass
 from typing import Optional, List, Dict, Any
 
+
 @dataclass
 class Message:
-    
     role: str
     content: str
     tool_call_id: Optional[str] = None
@@ -20,10 +20,8 @@ class Message:
             result["tool_calls"] = self.tool_calls
         return result
 
-    
-        
-class Conversation:
 
+class Conversation:
     def __init__(self):
         self.messages: List[Message] = []
 
@@ -43,10 +41,14 @@ class Conversation:
         self.add_message(Message(role="assistant", content=content))
 
     def add_tool_message(self, content: str, tool_calls: List[Dict[str, Any]]) -> None:
-        self.add_message(Message(role="assistant", content=content, tool_calls=tool_calls))
+        self.add_message(
+            Message(role="assistant", content=content, tool_calls=tool_calls)
+        )
 
     def add_tool_result(self, content: str, tool_call_id: str) -> None:
-        self.add_message(Message(role="tool", content=content, tool_call_id=tool_call_id))
+        self.add_message(
+            Message(role="tool", content=content, tool_call_id=tool_call_id)
+        )
 
     def get_messages(self) -> List[Dict[str, Any]]:
         return [message.to_dict() for message in self.messages]
@@ -54,8 +56,14 @@ class Conversation:
     def clear(self) -> None:
         self.messages = []
 
+
 if __name__ == "__main__":
-    message_test_1 = Message(role="user", content="",tool_call_id="123", tool_calls=[{"name": "test", "parameters": {"test": "test"}}])
+    message_test_1 = Message(
+        role="user",
+        content="",
+        tool_call_id="123",
+        tool_calls=[{"name": "test", "parameters": {"test": "test"}}],
+    )
     print(message_test_1)
     message_test_2 = Message(role="assistant", content="test")
     conversation_test = Conversation()

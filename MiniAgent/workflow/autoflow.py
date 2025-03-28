@@ -4,14 +4,14 @@ from MiniAgent.workflow.node import Node, START, END
 import re
 from typing import Dict, List
 
-class AutoFLow:
 
-    def __init__(self,agent: Agent):
+class AutoFLow:
+    def __init__(self, agent: Agent):
         self.graph = Graph()
         self.agent = agent
 
     # 获取流程代码
-    def get_flow_code(self,query: str):
+    def get_flow_code(self, query: str):
         if query:
             content_prompt = """
             1.你将收到一个问题，请将你这个问题拆成几个明确的子任务
@@ -68,48 +68,42 @@ class AutoFLow:
         else:
             print("请输入需求")
 
-
     def add_to_graph(self, nodes: Dict, edges: List):
-        node_objs = {}  
-    
+        node_objs = {}
+
         for node_id, data in nodes.items():
             if node_id == "START":
                 node = START()
             elif node_id == "END":
                 node = END()
             else:
-                node = Node(
-                    name=data["name"],         
-                    description=data["description"] 
-                )
-                node.type = "process"  
+                node = Node(name=data["name"], description=data["description"])
+                node.type = "process"
             node_objs[node_id] = node
             self.graph.add_node(node)
-        
+
         # 创建边对象
         for start_id, end_id in edges:
             start_node = node_objs.get(start_id)
             end_node = node_objs.get(end_id)
             if start_node and end_node:
                 self.graph.add_edge(start_node, end_node)
-        
-    def parse_flow_code(self, xml_str: str) -> (Dict[str, Dict], List[tuple]):
 
+    def parse_flow_code(self, xml_str: str) -> (Dict[str, Dict], List[tuple]):
         nodes = {}
         edges = []
-        node_matches = re.findall(r'<node name="(.*?)" description="(.*?)" */?>', xml_str)
+        node_matches = re.findall(
+            r'<node name="(.*?)" description="(.*?)" */?>', xml_str
+        )
         for name, description in node_matches:
-            nodes[name] = {
-                "name": name,
-                "description": description
-            }
+            nodes[name] = {"name": name, "description": description}
         edge_matches = re.findall(r'<edge start="(.*?)" end="(.*?)" */?>', xml_str)
         for start, end in edge_matches:
             edges.append((start, end))
-            
+
         return nodes, edges
 
-    def build_graph(self,query: str):
+    def build_graph(self, query: str):
         if query:
             flow_code = self.get_flow_code(query)
             nodes, edges = self.parse_flow_code(flow_code)
@@ -128,5 +122,3 @@ class AutoFLow:
 
     def run(self, query: str = ""):
         self.graph.run(query)
-        
-

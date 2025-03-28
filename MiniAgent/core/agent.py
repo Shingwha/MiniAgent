@@ -54,10 +54,7 @@ class Agent:
         self.clear_tools()
 
     def copy(self):
-        return Agent(
-            llm=self.llm,
-            tools=self.tools,
-            content_prompt=self.content_prompt)
+        return Agent(llm=self.llm, tools=self.tools, content_prompt=self.content_prompt)
 
     def run(self, query: str = None):
         if not self.conversation.messages:
@@ -68,15 +65,19 @@ class Agent:
         while True:
             response = self.llm.generate(
                 messages=self.conversation.get_messages(),
-                tools=[tool.to_dict() for tool in self.tools] if self.tools else None
+                tools=[tool.to_dict() for tool in self.tools] if self.tools else None,
             )
             content = response.content
             tool_calls = response.tool_calls
             if tool_calls:
-                self.conversation.add_tool_message(content=content, tool_calls=tool_calls)
+                self.conversation.add_tool_message(
+                    content=content, tool_calls=tool_calls
+                )
                 tool_results = self._execute_tool_calls(tool_calls)
                 for tool_call_id, tool_result in tool_results.items():
-                    self.conversation.add_tool_result(content=tool_result, tool_call_id=tool_call_id)
+                    self.conversation.add_tool_result(
+                        content=tool_result, tool_call_id=tool_call_id
+                    )
             else:
                 self.conversation.add_assistant_message(content)
                 break
@@ -93,11 +94,12 @@ class Agent:
                 if tool_name in tool_dict:
                     tool = tool_dict[tool_name]
                     result = tool.execute(**arguments)
-                    print(f"<{self.name}> -> Executing <{tool_name}> with {arguments} -> Result: {result}")
+                    print(
+                        f"<{self.name}> -> Executing <{tool_name}> with {arguments} -> Result: {result}"
+                    )
                     results[tool_call.id] = str(result)
                 else:
                     results[tool_call.id] = f"Tool <{tool_name}> not found: "
             except Exception as e:
                 results[tool_call.id] = f"Error executing tool <{tool_name}>: {e}"
         return results
-

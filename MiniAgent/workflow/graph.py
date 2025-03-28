@@ -2,8 +2,8 @@ from .node import Node
 from .edge import Edge
 from collections import deque
 
-class Graph:
 
+class Graph:
     def __init__(self, name: str = None):
         self.nodes = set()
         self.edges = set()
@@ -37,7 +37,7 @@ class Graph:
         in_degree = {node: len(node.in_edges) for node in self.nodes}
         queue = deque([node for node, degree in in_degree.items() if degree == 0])
         sorted_nodes = []
-        
+
         while queue:
             node = queue.popleft()
             sorted_nodes.append(node)
@@ -46,15 +46,17 @@ class Graph:
                 in_degree[next_node] -= 1
                 if in_degree[next_node] == 0:
                     queue.append(next_node)
-        
+
         if len(sorted_nodes) != len(self.nodes):
             raise Exception("Graph build failed: cycle detected")
         self.is_built = True
         self.sorted_nodes = sorted_nodes
         print(f"<{self.name}> -> built successfully")
-        print(f"<{self.name}> -> sorted nodes: {[node.name for node in self.sorted_nodes]}")
+        print(
+            f"<{self.name}> -> sorted nodes: {[node.name for node in self.sorted_nodes]}"
+        )
 
-    def run(self,query=""):
+    def run(self, query=""):
         if self.is_built:
             pass
         else:
@@ -68,7 +70,3 @@ class Graph:
             for edge in node.out_edges:
                 edge.end_node.info_from_pre_nodes.append(result)
         return self.sorted_nodes[-1].result
-
-
-            
-        

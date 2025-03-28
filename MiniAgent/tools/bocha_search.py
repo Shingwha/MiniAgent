@@ -4,22 +4,29 @@ import requests
 import json
 from datetime import datetime
 
-class BochaSearch(Tool):
-    def __init__(self,api_key):
-        self.api_key = api_key
-        super().__init__(name="bocha_search", description="当你不知道某些信息的时候，通过这个bocha搜索新闻或其他信息", func=self.bocha_search)
 
-    def bocha_search(self,query):
+class BochaSearch(Tool):
+    def __init__(self, api_key):
+        self.api_key = api_key
+        super().__init__(
+            name="bocha_search",
+            description="当你不知道某些信息的时候，通过这个bocha搜索新闻或其他信息",
+            func=self.bocha_search,
+        )
+
+    def bocha_search(self, query):
         url = "https://api.bochaai.com/v1/web-search"
-        payload = json.dumps({
-            "query": query,
-            "freshness": "noLimit",
-            "summary": True,
-            "count": 20,
-        })
+        payload = json.dumps(
+            {
+                "query": query,
+                "freshness": "noLimit",
+                "summary": True,
+                "count": 20,
+            }
+        )
         headers = {
-            'Authorization': self.api_key,
-            'Content-Type': 'application/json',
+            "Authorization": self.api_key,
+            "Content-Type": "application/json",
         }
 
         response = requests.request("POST", url, headers=headers, data=payload)
@@ -42,7 +49,7 @@ class BochaSearch(Tool):
                     "url": item.get("url"),
                     "snippet": item.get("snippet"),
                     "summary": item.get("summary"),
-                    "dateLastCrawled": date
+                    "dateLastCrawled": date,
                 }
                 filtered_results.append(filtered)
 
@@ -65,7 +72,8 @@ class BochaSearch(Tool):
         else:
             return raw_data
 
-if __name__ == '__main__':
-    tool = BochaSearch(api_key='')
-    result = tool.execute(query='AI科技新闻')
+
+if __name__ == "__main__":
+    tool = BochaSearch(api_key="")
+    result = tool.execute(query="AI科技新闻")
     print(result)

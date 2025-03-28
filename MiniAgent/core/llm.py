@@ -4,6 +4,7 @@ from dataclasses import dataclass
 import json
 from .message import Conversation
 
+
 @dataclass
 class ChatOpenAI:
     name: str = None
@@ -72,9 +73,9 @@ class ChatOpenAI:
             print(f"Error saving config to {file_path}: {e}")
 
     def generate(
-            self,
-            messages: Union[List[Dict[str, Any]], Conversation],
-            tools: Optional[list[Dict]] = None
+        self,
+        messages: Union[List[Dict[str, Any]], Conversation],
+        tools: Optional[list[Dict]] = None,
     ) -> Dict[str, Any]:
         kwargs = {
             "model": self.model_name,
