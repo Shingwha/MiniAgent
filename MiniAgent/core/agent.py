@@ -3,6 +3,7 @@ import json
 from dataclasses import dataclass, field
 from .tool import Tool
 from .message import Conversation
+from .memory import Memory,MemoryBank
 
 
 @dataclass
@@ -13,6 +14,7 @@ class Agent:
     system_prompt: str = "你是一个智能代理，协调LLM和工具使用"
     content_prompt: str = None
     conversation: Conversation = field(default_factory=Conversation)
+    memorybank: MemoryBank = field(default_factory=MemoryBank)
 
     def __post_init__(self):
         if self.name is None:
@@ -36,18 +38,30 @@ class Agent:
     def set_content_prompt(self, content_prompt: str):
         self.content_prompt = content_prompt
 
+    def set_memorybank(self, memorybank: MemoryBank):
+        self.memorybank = memorybank
+
     def add_tool(self, tool: Union[Tool, Callable]) -> Optional[str]:
         self.tools.append(tool)
+
+    def add_memory(self, memory: Memory):
+        self.memorybank.add_memory(memory)
 
     def remove_tool(self, tool: Union[Tool, Callable]) -> Optional[str]:
         if tool in self.tools:
             self.tools.remove(tool)
+
+    def remove_memory(self, memory: Memory):
+        self.memorybank.remove_memory(memory)
 
     def clear_conversation(self):
         self.conversation.clear()
 
     def clear_tools(self):
         self.tools = []
+
+    def clear_memorybank(self):
+        self.memorybank.clear()
 
     def reset(self):
         self.clear_conversation()
